@@ -21,7 +21,6 @@
 #include <ESP8266WiFi.h>
 #include <ESPAsyncE131.h>
 
-#define WIFI_CONNECT_TIMEOUT 10000      // Try connecting for 10 seconds
 #define UNIVERSE 1                      // First DMX Universe to listen for
 #define UNIVERSE_COUNT 2                // Total number of Universes to listen for, starting at UNIVERSE
 
@@ -47,23 +46,21 @@ void setup() {
     else
         WiFi.begin(ssid);
 
-    uint32_t timeout = millis();
     while (WiFi.status() != WL_CONNECTED) {
         delay(500);
-        if (Serial)
-            Serial.print(".");
-        if (millis() - timeout > WIFI_CONNECT_TIMEOUT) {
-            if (Serial) {
-                Serial.println("");
-                Serial.println(F("*** Failed to connect ***"));
-            }
-            break;
-        }
+        Serial.print(".");
     }
 
+    Serial.println("");
+    Serial.print(F("Connected with IP: "));
+    Serial.println(WiFi.localIP());
+    
     // Choose one to begin listening for E1.31 data
-    e131.begin(E131_UNICAST);                               // Listen via Unicast
-    //e131.begin(E131_MULTICAST, UNIVERSE, UNIVERSE_COUNT);   // Listen via Multicast
+    //if (e131.begin(E131_UNICAST))                               // Listen via Unicast
+    if (e131.begin(E131_MULTICAST, UNIVERSE, UNIVERSE_COUNT))   // Listen via Multicast
+        Serial.println(F("Listening for data..."));
+    else 
+        Serial.println(F("*** e131.begin failed ***"));
 }
 
 void loop() {
@@ -71,11 +68,11 @@ void loop() {
         e131_packet_t packet;
         e131.pull(&packet);     // Pull packet from ring buffer
         
-        Serial.printf("Universe %u / %u Channels | Packets: %u / Sequence Errors: %u / CH1: %u\n",
+        Serial.printf("Universe %u / %u Channels | Packet#: %u / Errors: %u / CH1: %u\n",
                 htons(packet.universe),                 // The Universe for this packet
-                htons(packet.property_value_count - 1), // Start code is ignored, we're interested in dimmer data
+                htons(packet.property_value_count) - 1, // Start code is ignored, we're interested in dimmer data
                 e131.stats.num_packets,                 // Packet counter
-                e131.stats.sequence_errors,             // Sequence error tracker
+                e131.stats.packet_errors,               // Packet error counter
                 packet.property_values[1]);             // Dimmer data for Channel 1
     }
 }

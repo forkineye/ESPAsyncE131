@@ -111,7 +111,6 @@ typedef enum {
 // Status structure
 typedef struct {
     uint32_t    num_packets;
-    uint32_t    sequence_errors;
     uint32_t    packet_errors;
     IPAddress   last_clientIP;
     uint16_t    last_clientPort;
@@ -126,7 +125,6 @@ class ESPAsyncE131 {
     static const uint8_t VECTOR_DMP = 2;
 
     e131_packet_t   *sbuff;     // Pointer to scratch packet buffer
-    uint8_t         sequence;   // Sequence tracker
     AsyncUDP        udp;        // AsyncUDP
     RingBuf         *pbuff;     // Ring Buffer of universe packet buffers
 
