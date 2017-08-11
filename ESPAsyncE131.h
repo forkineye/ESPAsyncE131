@@ -30,7 +30,6 @@
 
 // Defaults
 #define E131_DEFAULT_PORT 5568
-#define WIFI_CONNECT_TIMEOUT 10000  // 10 seconds
 
 // E1.31 Packet Offsets
 #define E131_ROOT_PREAMBLE_SIZE 0
