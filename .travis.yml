@@ -11,7 +11,6 @@ before_install:
   - tar xf arduino-1.8.1-linux64.tar.xz
   - mv arduino-1.8.1 $HOME/ide
   - export PATH="$HOME/ide:$PATH"
-  - which arduino
   - mkdir -p $LIB_HOME
   - mkdir -p $ESP_HOME
   - git clone https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266
@@ -20,7 +19,7 @@ before_install:
   - git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
 install:
   - ln -s $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
-  - arduino --board esp8266:esp8266:generic:CpuFrequency=160,FlashSize=1M128 --save-prefs
+  - arduino --board esp8266com:esp8266:generic:CpuFrequency=160,FlashSize=1M128 --save-prefs
   - arduino --get=pref sketchbook.path
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
