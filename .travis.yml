@@ -1,7 +1,7 @@
 language: c
 env:
   global:
-    - ESP_HOME=$HOME/Arduino/hardware/esp8266com
+    - ESP_HOME=$HOME/ide/hardware/esp8266com
     - LIB_HOME=$HOME/Arduino/libraries
 before_install:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
