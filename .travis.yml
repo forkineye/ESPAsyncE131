@@ -20,7 +20,6 @@ before_install:
 install:
   - ln -s $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
   - arduino --board esp8266com:esp8266:generic:CpuFrequency=160,FlashSize=1M128 --save-prefs
-  - arduino --get=pref sketchbook.path
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
   - build_sketches arduino $LIB_HOME/ESPAsyncE131 esp8266
