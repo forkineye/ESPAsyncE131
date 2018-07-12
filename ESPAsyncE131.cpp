@@ -139,7 +139,7 @@ void ESPAsyncE131::dumpError(e131_error_t error) {
     switch (error) {
         case ERROR_ACN_ID:
             Serial.print(F("INVALID PACKET ID: "));
-            for (int i = 0; i < sizeof(ACN_ID); i++)
+            for (uint i = 0; i < sizeof(ACN_ID); i++)
                 Serial.print(sbuff->acn_id[i], HEX);
             Serial.println("");
             break;
@@ -157,5 +157,9 @@ void ESPAsyncE131::dumpError(e131_error_t error) {
         case ERROR_VECTOR_DMP:
             Serial.print(F("INVALID DMP VECTOR: 0x"));
             Serial.println(sbuff->dmp_vector, HEX);
+        case ERROR_NONE:
+            break;
+        case ERROR_IGNORE:
+            break;
     }
 }
