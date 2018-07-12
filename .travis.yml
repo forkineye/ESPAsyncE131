@@ -18,7 +18,7 @@ install:
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
-  - build_sketches arduino $PWD/examples esp8266
+  - build_examples
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 notifications:

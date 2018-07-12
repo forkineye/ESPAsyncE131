@@ -1,22 +1,48 @@
 #!/bin/bash
 
-function build_sketches() {
-    local arduino=$1
-    local srcpath=$2
-    local platform=$3
-    local sketches=$(find $srcpath -name *.ino)
-    for sketch in $sketches; do
-        local sketchdir=$(dirname $sketch)
-        if [[ -f "$sketchdir/.$platform.skip" ]]; then
-            echo -e "\n\n ------------ Skipping $sketch ------------ \n\n";
-            continue
-        fi
-        echo -e "\n\n ------------ Building $sketch ------------ \n\n";
-        $arduino --verify $sketch;
-        local result=$?
-        if [ $result -ne 0 ]; then
-            echo "Build failed ($1)"
-            return $result
-        fi
-    done
+function build_examples()
+{
+  # track the exit code for this platform
+  local exit_code=0
+  # loop through results and add them to the array
+  examples=($(find $PWD/examples/ -name "*.pde" -o -name "*.ino"))
+
+  # get the last example in the array
+  local last="${examples[@]:(-1)}"
+
+  # loop through example sketches
+  for example in "${examples[@]}"; do
+
+    # store the full path to the example's sketch directory
+    local example_dir=$(dirname $example)
+
+    # store the filename for the example without the path
+    local example_file=$(basename $example)
+
+    echo "$example_file: "
+    local sketch="$example_dir/$example_file"
+    echo "$sketch"
+    #arduino -v --verbose-build --verify $sketch
+
+    # verify the example, and save stdout & stderr to a variable
+    # we have to avoid reading the exit code of local:
+    # "when declaring a local variable in a function, the local acts as a command in its own right"
+    local build_stdout
+    build_stdout=$(arduino --verify $sketch 2>&1)
+
+    # echo output if the build failed
+    exit_code=$?
+    if [ $exit_code -ne 0 ]; then
+      # heavy X
+      echo -e "\xe2\x9c\x96"
+      echo -e "----------------------------- DEBUG OUTPUT -----------------------------\n"
+      echo "$build_stdout"
+      echo -e "\n------------------------------------------------------------------------\n"
+    else
+      # heavy checkmark
+      echo -e "\xe2\x9c\x93"
+    fi
+  done
+
+  return $exit_code
 }
