@@ -1,8 +1,8 @@
 language: c
 env:
   global:
-    - BD="esp8266:esp8266:generic:CpuFrequency=160,FlashSize=1M128"
-    - ESP_HOME="$HOME/Arduino/hardware/esp8266com"
+    - BD=esp8266:esp8266:generic:CpuFrequency=160,FlashSize=1M128
+    - ESP_HOME=$HOME/Arduino/hardware/esp8266com
 before_install:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
   - sleep 3
