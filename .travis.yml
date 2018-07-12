@@ -18,7 +18,7 @@ install:
   - arduino --pref "compiler.warning_level=all" --save-prefs
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
-  - build_examples
+  - build_sketches arduino $HOME/Arduino/libraries/ESPAsyncE131 esp8266
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 notifications:
