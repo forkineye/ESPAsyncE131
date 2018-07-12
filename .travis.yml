@@ -1,28 +1,30 @@
 language: c
 env:
   global:
-    - BD=esp8266:esp8266:generic:CpuFrequency=160,FlashSize=1M128
     - ESP_HOME=$HOME/Arduino/hardware/esp8266com
+    - LIB_HOME=$HOME/Arduino/libraries
 before_install:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
   - sleep 3
   - export DISPLAY=:1.0
   - wget http://downloads.arduino.cc/arduino-1.8.1-linux64.tar.xz
   - tar xf arduino-1.8.1-linux64.tar.xz
-  - sudo mv arduino-1.8.1 /usr/local/share/arduino
-  - sudo ln -s /usr/local/share/arduino/arduino /usr/local/bin/arduino
+  - mv arduino-1.8.1 $HOME/ide
+  - export PATH="$HOME/ide:$PATH"
+  - which arduino
+  - mkdir -p $LIB_HOME
   - mkdir -p $ESP_HOME
   - git clone https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266
   - cd $ESP_HOME/esp8266/tools
   - python get.py
+  - git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
 install:
-  - ln -s $PWD /usr/local/share/arduino/libraries/ESPAsyncE131
-  - git clone https://github.com/me-no-dev/ESPAsyncUDP $HOME/Arduino/libraries/ESPAsyncUDP
-  - arduino --board $BD --save-prefs
+  - ln -s $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
+  - arduino --board esp8266:esp8266:generic:CpuFrequency=160,FlashSize=1M128 --save-prefs
   - arduino --get=pref sketchbook.path
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
-  - build_examples
+  - build_sketches arduino $LIB_HOME/ESPAsyncE131 esp8266
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 notifications:
