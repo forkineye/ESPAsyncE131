@@ -24,8 +24,6 @@ script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
   - cd $LIB_HOME/ESPAsyncE131  
   - build_sketches arduino $LIB_HOME/ESPAsyncE131 esp8266
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
 notifications:
   email:
     on_success: change
