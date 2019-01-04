@@ -13,17 +13,17 @@ before_install:
   - export PATH="$HOME/ide:$PATH"
   - mkdir -p $LIB_HOME
   - if [[ "$BOARD" =~ "esp8266com:esp8266:" ]]; then
-      mkdir -p $ESP_HOME
-      git clone --recurse-submodules -j8 https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266
-      cd $ESP_HOME/esp8266/tools
-      python get.py
-      git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
+      mkdir -p $ESP_HOME &&
+      git clone --recurse-submodules -j8 https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266 &&
+      cd $ESP_HOME/esp8266/tools &&
+      python get.py &&
+      git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP;
     fi
   - if [[ "$BOARD" =~ "espressif:esp32:" ]]; then
-      mkdir -p $ESP_HOME
-      git clone --recurse-submodules -j8 https://github.com/espressif/arduino-esp32.git $ESP_HOME/esp32
-      cd $ESP_HOME/esp32/tools
-      python get.py
+      mkdir -p $ESP_HOME &&
+      git clone --recurse-submodules -j8 https://github.com/espressif/arduino-esp32.git $ESP_HOME/esp32 &&
+      cd $ESP_HOME/esp32/tools &&
+      python get.py;
     fi
 install:
   - cp -r $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
