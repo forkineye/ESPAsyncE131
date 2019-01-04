@@ -36,6 +36,10 @@
 #include <Arduino.h>
 #include "RingBuf.h"
 
+#if LWIP_VERSION_MAJOR == 1
+typedef struct ip_addr ip4_addr_t;
+#endif
+
 // Defaults
 #define E131_DEFAULT_PORT 5568
 
