@@ -1,9 +1,9 @@
 /*
-* ESP8266_Test.ino - Simple sketch to listen for E1.31 data on an ESP8266 
-*                    and print some statistics.
+* E131_Test.ino - Simple sketch to listen for E1.31 data on an ESP32 
+*                  and print some statistics.
 *
-* Project: E131 - E.131 (sACN) library for Arduino
-* Copyright (c) 2015 Shelby Merrick
+* Project: ESPAsyncE131 - Asynchronous E.131 (sACN) library for Arduino ESP8266 and ESP32
+* Copyright (c) 2019 Shelby Merrick
 * http://www.forkineye.com
 *
 *  This program is provided free for you to use in any way that you wish,
@@ -18,7 +18,6 @@
 *
 */
 
-#include <ESP8266WiFi.h>
 #include <ESPAsyncE131.h>
 
 #define UNIVERSE 1                      // First DMX Universe to listen for

@@ -1,8 +1,8 @@
 /*
 * ESPAsyncE131.h
 *
-* Project: ESPAsyncE131 - Asynchronous E.131 (sACN) library for Arduino ESP8266
-* Copyright (c) 2017 Shelby Merrick
+* Project: ESPAsyncE131 - Asynchronous E.131 (sACN) library for Arduino ESP8266 and ESP32
+* Copyright (c) 2019 Shelby Merrick
 * http://www.forkineye.com
 *
 *  This program is provided free for you to use in any way that you wish,
@@ -20,9 +20,17 @@
 #ifndef ESPASYNCE131_H_
 #define ESPASYNCE131_H_
 
+#ifdef ESP32
+#include <WiFi.h>
+#include <AsyncUDP.h>
+#elif defined (ESP8266)
 #include <ESPAsyncUDP.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
+#else
+#error Platform not supported
+#endif
+
 #include <lwip/ip_addr.h>
 #include <lwip/igmp.h>
 #include <Arduino.h>

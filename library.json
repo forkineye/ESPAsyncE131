@@ -6,14 +6,14 @@
     "type": "git",
     "url": "https://github.com/forkineye/ESPAsyncE131.git"
   },
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": {
     "name": "Shelby Merrick",
     "url": "http://forkineye.com",
     "maintainer": true
   },
   "frameworks": "arduino",
-  "platforms": "espressif8266",
+  "platforms": ["espressif8266", "espressif32"],
   "dependencies":
   {
     "name": "ESPAsyncUDP"

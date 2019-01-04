@@ -1,29 +1,35 @@
 language: c
 env:
   global:
-    - ESP_HOME=$HOME/ide/hardware/esp8266com
+    - IDE_VERSION=1.8.1
     - LIB_HOME=$HOME/Arduino/libraries
+    matrix:
+    - BOARD="esp8266com:esp8266:generic" ESP_HOME=$HOME/ide/hardware/esp8266com
+    - BOARD="espressif:esp32:esp32" ESP_HOME=$HOME/ide/hardware/espressif
 before_install:
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_1.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :1 -ac -screen 0 1280x1024x16"
-  - sleep 3
-  - export DISPLAY=:1.0
-  - wget http://downloads.arduino.cc/arduino-1.8.1-linux64.tar.xz
-  - tar xf arduino-1.8.1-linux64.tar.xz
-  - mv arduino-1.8.1 $HOME/ide
+  - wget http://downloads.arduino.cc/arduino-$IDE_VERSION-linux64.tar.xz
+  - tar xf arduino-$IDE_VERSION-linux64.tar.xz
+  - mv arduino-$IDE_VERSION $HOME/ide
   - export PATH="$HOME/ide:$PATH"
   - mkdir -p $LIB_HOME
-  - mkdir -p $ESP_HOME
-  - git clone https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266
-  - cd $ESP_HOME/esp8266/tools
-  - python get.py
-  - git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
+  - if [[ "$BOARD" =~ "esp8266com:esp8266:" ]]; then
+      mkdir -p $ESP_HOME
+      git clone --recurse-submodules -j8 https://github.com/esp8266/Arduino.git $ESP_HOME/esp8266
+      cd $ESP_HOME/esp8266/tools
+      python get.py
+      git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
+    fi
+  - if [[ "$BOARD" =~ "espressif:esp32:" ]]; then
+      mkdir -p $ESP_HOME
+      git clone --recurse-submodules -j8 https://github.com/espressif/arduino-esp32.git $ESP_HOME/esp32
+      cd $ESP_HOME/esp32/tools
+      python get.py
+    fi
 install:
   - cp -r $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
-  - arduino --board esp8266com:esp8266:generic:FlashFreq=40,FlashMode=dio,xtal=160,eesz=1M128 --save-prefs
 script:
-  - source $TRAVIS_BUILD_DIR/travis/common.sh
-  - cd $LIB_HOME/ESPAsyncE131  
-  - build_sketches arduino $LIB_HOME/ESPAsyncE131 esp8266
+  - cd $LIB_HOME/ESPAsyncE131
+  - arduino --verbose-build --verify --board $BOARD examples/E131_Test/E131_Test.ino
 notifications:
   email:
     on_success: change
