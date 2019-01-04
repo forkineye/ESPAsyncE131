@@ -29,7 +29,7 @@ install:
   - cp -r $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
 script:
   - cd $LIB_HOME/ESPAsyncE131
-  - arduino --verify --board $BOARD examples/E131_Test/E131_Test.ino
+  - arduino --verobse-build --verify --board $BOARD examples/E131_Test/E131_Test.ino
 notifications:
   email:
     on_success: change
