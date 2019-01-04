@@ -19,7 +19,7 @@ before_install:
   - git clone https://github.com/me-no-dev/ESPAsyncUDP $LIB_HOME/ESPAsyncUDP
 install:
   - cp -r $TRAVIS_BUILD_DIR $LIB_HOME/ESPAsyncE131
-  - arduino --board esp8266com:esp8266:generic:FlashFreq=40,FlashMode=dio,CpuFrequency=160,FlashSize=1M128 --save-prefs
+  - arduino --board esp8266com:esp8266:generic:FlashFreq=40,FlashMode=dio,xtal=160,eesz=1M128 --save-prefs
 script:
   - source $TRAVIS_BUILD_DIR/travis/common.sh
   - cd $LIB_HOME/ESPAsyncE131  
