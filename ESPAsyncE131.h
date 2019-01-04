@@ -113,6 +113,7 @@ typedef struct {
     uint32_t    packet_errors;
     IPAddress   last_clientIP;
     uint16_t    last_clientPort;
+    unsigned long    last_seen;
 } e131_stats_t;
 
 class ESPAsyncE131 {

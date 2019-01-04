@@ -120,6 +120,7 @@ void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet) {
         stats.num_packets++;
         stats.last_clientIP = _packet.remoteIP();
         stats.last_clientPort = _packet.remotePort();
+        stats.last_seen = millis();
     } else if (error == ERROR_IGNORE) {
         // Do nothing
     } else {
