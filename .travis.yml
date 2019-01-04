@@ -1,9 +1,9 @@
-language: c
+language: generic
 env:
   global:
     - IDE_VERSION=1.8.1
     - LIB_HOME=$HOME/Arduino/libraries
-    matrix:
+  matrix:
     - BOARD="esp8266com:esp8266:generic" ESP_HOME=$HOME/ide/hardware/esp8266com
     - BOARD="espressif:esp32:esp32" ESP_HOME=$HOME/ide/hardware/espressif
 before_install:
