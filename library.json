@@ -16,6 +16,7 @@
   "platforms": ["espressif8266", "espressif32"],
   "dependencies":
   {
-    "name": "ESPAsyncUDP"
+    "name": "ESPAsyncUDP",
+    "platforms": "espressif8266"
   }
 }
