@@ -47,7 +47,7 @@
     #else
         #define RB_ATOMIC_START {
         #define RB_ATOMIC_END }
-        #warning “This library only fully supports AVR and ESP8266 Boards.”
+        #warning "This library only fully supports AVR and ESP8266 Boards."
         #warning "Operations on the buffer in ISRs are not safe!"
     #endif
 
