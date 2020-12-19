@@ -3,7 +3,8 @@
         {
             "name": "WSL",
             "includePath": [
-                "${workspaceFolder}/**",
+                "${workspaceFolder}/../**",
+                "${workspaceFolder}/../../hardware/esp8266com/esp8266/**",
                 "${workspaceFolder}/../../hardware/espressif/esp32/**"
             ],
             "defines": [
