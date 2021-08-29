@@ -10,6 +10,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Checkout Ourself
+      - uses: actions/checkout@v2
+
       # Arduino stuff
       - uses: arduino/setup-arduino-cli@v1
       - name: Update board indexes and set paths
@@ -24,12 +27,12 @@ jobs:
 
       # Grab all the required libraries
       # Checkout won't allow paths outside of our workspace, so we put them in alib and move later.
-
-      # Checkout Ourself
-      - uses: actions/checkout@v2
+      - name: Checkout ESPAsyncE131
+        uses: actions/checkout@v2
         with:
+          repository: forkineye/ESPAsyncE131
           path: alib/ESPAsyncE131
-
+          
       - name: Checkout ESPAsyncUDP
         uses: actions/checkout@v2
         with:
@@ -46,8 +49,8 @@ jobs:
       # Build examples
       - name: Compile for ESP8266
         run: |
-          arduino-cli compile --fqbn $ESP8266_FQBN ~arduino/libraries/ESPAsyncE131/examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test/E131_Test.ino
  
       - name: Compile for ESP32
         run: |
-          arduino-cli compile --fqbn $ESP32_FQBN ~arduino/libraries/ESPAsyncE131/examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test/E131_Test.ino
