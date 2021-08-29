@@ -1,6 +1,6 @@
 # ESPAsyncE131 - Asynchronous E.131 (sACN) library for Arduino ESP8266 and ESP32
 
-[![Build Status](https://travis-ci.org/forkineye/ESPAsyncE131.svg?branch=master)](https://travis-ci.org/forkineye/ESPAsyncE131)
+[![Build Status](https://github.com/forkineye/ESPAsyncE131/actions/workflows/build.yaml/badge.svg)](https://github.com/forkineye/ESPAsyncE131/actions/workflows/build.yaml)
 
 This library is to simplify the validation and handling of E1.31 sACN (DMX over Ethernet) traffic on Arduino ESP8266 and ESP32 based platforms.  It supports both Unicast and Multicast configurations, exposing the full E1.31 packet to the user.  If you require support for traditional Arduino devices or polling modes, please refer to the [E131](https://github.com/forkineye/E131) library from which this project was derived from.
 

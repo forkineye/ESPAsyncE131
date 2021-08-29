@@ -1,0 +1,50 @@
+name: ESPAsyncE131 CI
+on: [push, pull_request]
+env:
+  ESP8266_PLAT: 'esp8266:esp8266@3.0.2'
+  ESP8266_FQBN: 'esp8266:esp8266:generic:xtal=160,vt=flash,exception=disabled,ResetMethod=nodemcu,CrystalFreq=26,FlashFreq=40,FlashMode=dio,eesz=4M2M,led=2,ip=hb2f,dbg=Disabled'
+  ESP32_PLAT: 'esp32:esp32@1.0.6'
+  ESP32_FQBN: 'esp32:esp32:d32_pro:PSRAM=enabled,PartitionScheme=default,FlashFreq=80,DebugLevel=none'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout Ourself
+      - uses: actions/checkout@v2
+
+      # Arduino stuff
+      - uses: arduino/setup-arduino-cli@v1
+      - name: Update board indexes and set paths
+        run: |
+          arduino-cli config init
+          arduino-cli config add board_manager.additional_urls https://arduino.esp8266.com/stable/package_esp8266com_index.json https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+          arduino-cli config set directories.user ~/arduino
+      - name: Install platforms
+        run: |
+          arduino-cli core install $ESP8266_PLAT
+          arduino-cli core install $ESP32_PLAT
+
+      # Grab all the required libraries
+      # Checkout won't allow paths outside of our workspace, so we put them in alib and move later.
+      - name: Checkout ESPAsyncUDP
+        uses: actions/checkout@v2
+        with:
+          repository: me-no-dev/ESPAsyncUDP
+          path: alib/ESPAsyncUDP
+
+      # Move Arduino libraries where they need to be.
+      - name: Move Arduino Libraries
+        run: |
+          mkdir -p ~/arduino/libraries
+          mv alib/* ~/arduino/libraries
+          rmdir alib
+
+      # Build examples
+      - name: Compile for ESP8266
+        run: |
+          arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test/E131_Test.ino
+ 
+      - name: Compile for ESP32
+        run: |
+          arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test/E131_Test.ino
