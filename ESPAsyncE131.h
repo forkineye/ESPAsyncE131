@@ -139,6 +139,7 @@ class ESPAsyncE131 {
     e131_packet_t   *sbuff;     // Pointer to scratch packet buffer
     AsyncUDP        udp;        // AsyncUDP
     RingBuf         *pbuff;     // Ring Buffer of universe packet buffers
+    void            * UserInfo = nullptr;
 
     // Internal Initializers
     bool initUnicast();
@@ -146,6 +147,8 @@ class ESPAsyncE131 {
 
     // Packet parser callback
     void parsePacket(AsyncUDPPacket _packet);
+
+    void (*PacketCallback)(e131_packet_t* ReceivedData, void* UserInfo) = nullptr;
 
  public:
     e131_stats_t  stats;    // Statistics tracker
@@ -158,7 +161,8 @@ class ESPAsyncE131 {
     // Ring buffer access
     inline bool isEmpty() { return pbuff->isEmpty(pbuff); }
     inline void *pull(e131_packet_t *packet) { return pbuff->pull(pbuff, packet); }
-    
+    void RegisterCallback (void* _UserInfo, void (*cbFunction)(e131_packet_t*, void*)) { PacketCallback = cbFunction; UserInfo = _UserInfo; }
+
     // Diag functions
     void dumpError(e131_error_t error);
 };

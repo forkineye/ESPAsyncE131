@@ -25,10 +25,13 @@ const byte ESPAsyncE131::ACN_ID[12] = { 0x41, 0x53, 0x43, 0x2d, 0x45, 0x31, 0x2e
 
 // Constructor
 ESPAsyncE131::ESPAsyncE131(uint8_t buffers) {
-    pbuff = RingBuf_new(sizeof(e131_packet_t), buffers);
-
-    stats.num_packets = 0;
-    stats.packet_errors = 0;
+    
+    pbuff = nullptr;
+    if (buffers)
+    {
+        pbuff = RingBuf_new (sizeof (e131_packet_t), buffers);
+    }
+    memset ((void*)&stats, 0x00, sizeof (stats));
 }
 
 /////////////////////////////////////////////////////////
@@ -116,7 +119,9 @@ void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet) {
 
 
     if (!error) {
-        pbuff->add(pbuff, sbuff);
+        if (PacketCallback) { (*PacketCallback) (sbuff, UserInfo); }
+        if (pbuff) { pbuff->add (pbuff, sbuff); }
+        
         stats.num_packets++;
         stats.last_clientIP = _packet.remoteIP();
         stats.last_clientPort = _packet.remotePort();
