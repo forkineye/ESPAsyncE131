@@ -161,7 +161,9 @@ class ESPAsyncE131 {
     // Ring buffer access
     inline bool isEmpty() { return pbuff->isEmpty(pbuff); }
     inline void *pull(e131_packet_t *packet) { return pbuff->pull(pbuff, packet); }
-    void RegisterCallback (void* _UserInfo, void (*cbFunction)(e131_packet_t*, void*)) { PacketCallback = cbFunction; UserInfo = _UserInfo; }
+
+    // Callback support
+    void registerCallback(void* _UserInfo, void (*cbFunction)(e131_packet_t*, void*)) { PacketCallback = cbFunction; UserInfo = _UserInfo; }
 
     // Diag functions
     void dumpError(e131_error_t error);
