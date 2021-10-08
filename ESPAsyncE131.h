@@ -128,6 +128,8 @@ typedef struct {
     unsigned long    last_seen;
 } e131_stats_t;
 
+typedef uint16_t ESPAsyncE131PortId;
+
 class ESPAsyncE131 {
  private:
     // Constants for packet validation
@@ -149,14 +151,15 @@ class ESPAsyncE131 {
     void parsePacket(AsyncUDPPacket _packet);
 
     void (*PacketCallback)(e131_packet_t* ReceivedData, void* UserInfo) = nullptr;
+    ESPAsyncE131PortId E131_ListenPort = E131_DEFAULT_PORT;
 
  public:
     e131_stats_t  stats;    // Statistics tracker
-
     ESPAsyncE131(uint8_t buffers = 1);
 
     // Generic UDP listener, no physical or IP configuration
-    bool begin(e131_listen_t type, uint16_t universe = 1, uint8_t n = 1);
+    bool begin (e131_listen_t type, uint16_t universe = 1, uint8_t n = 1);
+    bool begin (e131_listen_t type, ESPAsyncE131PortId UdpPortId, uint16_t universe, uint8_t n);
 
     // Ring buffer access
     inline bool isEmpty() { return pbuff->isEmpty(pbuff); }

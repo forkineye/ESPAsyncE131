@@ -42,13 +42,21 @@ ESPAsyncE131::ESPAsyncE131(uint8_t buffers) {
 //
 /////////////////////////////////////////////////////////
 
-bool ESPAsyncE131::begin(e131_listen_t type, uint16_t universe, uint8_t n) {
+bool ESPAsyncE131::begin(e131_listen_t type, uint16_t universe, uint8_t n)
+{
+    begin (type, E131_ListenPort, universe, n);
+}
+
+bool ESPAsyncE131::begin (e131_listen_t type, ESPAsyncE131PortId UdpPortId, uint16_t universe, uint8_t n)
+{
     bool success = false;
 
+    E131_ListenPort = UdpPortId;
+
     if (type == E131_UNICAST)
-        success = initUnicast();
+        success = initUnicast ();
     if (type == E131_MULTICAST)
-        success = initMulticast(universe, n);
+        success = initMulticast (universe, n);
 
     return success;
 }
@@ -63,7 +71,7 @@ bool ESPAsyncE131::initUnicast() {
     bool success = false;
     delay(100);
 
-    if (udp.listen(E131_DEFAULT_PORT)) {
+    if (udp.listen(E131_ListenPort)) {
         udp.onPacket(std::bind(&ESPAsyncE131::parsePacket, this,
                 std::placeholders::_1));
         success = true;
@@ -78,7 +86,7 @@ bool ESPAsyncE131::initMulticast(uint16_t universe, uint8_t n) {
     IPAddress address = IPAddress(239, 255, ((universe >> 8) & 0xff),
         ((universe >> 0) & 0xff));
 
-    if (udp.listenMulticast(address, E131_DEFAULT_PORT)) {
+    if (udp.listenMulticast(address, E131_ListenPort)) {
         ip4_addr_t ifaddr;
         ip4_addr_t multicast_addr;
 
