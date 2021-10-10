@@ -44,7 +44,7 @@ ESPAsyncE131::ESPAsyncE131(uint8_t buffers) {
 
 bool ESPAsyncE131::begin(e131_listen_t type, uint16_t universe, uint8_t n)
 {
-    begin (type, E131_ListenPort, universe, n);
+    return begin (type, E131_ListenPort, universe, n);
 }
 
 bool ESPAsyncE131::begin (e131_listen_t type, ESPAsyncE131PortId UdpPortId, uint16_t universe, uint8_t n)
