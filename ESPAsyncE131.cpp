@@ -89,10 +89,7 @@ bool ESPAsyncE131::begin (e131_listen_t type, ESPAsyncE131PortId UdpPortId, uint
 void ESPAsyncE131::sendPacket(uint16_t universe) {
     IPAddress ipMultiE131 = IPAddress(239, 255, ((universe >> 8) & 0xff), ((universe >> 0) & 0xff));
     setPacketHeader(universe,512);
-    // ipMultiE131, 
     udp.broadcastTo(pwbuffTX->raw, sizeof(pwbuffTX->raw), E131_DEFAULT_PORT); // , WiFi.localIP());
-    // udp.broadcastTo(pwbuffTX->raw, sizeof(pwbuffTX->raw), E131_DEFAULT_PORT);
-    // udp.write(pwbuffTX->raw, sizeof(pwbuffTX->raw));
 }
 
 
@@ -139,7 +136,7 @@ int ESPAsyncE131::setPacketHeader(const uint16_t universe, const uint16_t num_ch
     sizeof pwbuffTX->root.vector + sizeof pwbuffTX->root.cid + frame_length;
 
   // clear packet
-  // TODO: memset(packet, 0, sizeof *packet);
+  memset(packetTX, 0, sizeof *packetTX);
 
   // set Root Layer values
   pwbuffTX->root.preamble_size 	= swapf_uint16(_E131_PREAMBLE_SIZE);
