@@ -28,12 +28,6 @@ jobs:
 
       # Grab all the required libraries
       # Checkout won't allow paths outside of our workspace, so we put them in alib and move later.
-      - name: Checkout ESPAsyncE131
-        uses: actions/checkout@v2
-        with:
-          repository: forkineye/ESPAsyncE131
-          path: alib/ESPAsyncE131
-          
       - name: Checkout ESPAsyncUDP
         uses: actions/checkout@v2
         with:
@@ -49,6 +43,7 @@ jobs:
           mkdir -p ~/arduino/libraries/wifi
           echo "#define SECRET_SSID \"test\";" > ~/arduino/libraries/wifi/wifi.h
           echo "#define SECRET_PSK \"test\";" >>  ~/arduino/libraries/wifi/wifi.h
+          cp -rv ./ ~/arduino/libraries/ESPAsyncE131
 
 
       # Build examples
