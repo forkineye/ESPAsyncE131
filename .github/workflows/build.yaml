@@ -47,8 +47,8 @@ jobs:
           mv alib/* ~/arduino/libraries
           rmdir alib
           mkdir -p ~/arduino/libraries/wifi
-          echo "#define SECRET_SSID "";" > ~/arduino/libraries/wifi/wifi.h
-          echo "#define SECRET_PSK "";" >>  ~/arduino/libraries/wifi/wifi.h
+          echo "#define SECRET_SSID \"test\";" > ~/arduino/libraries/wifi/wifi.h
+          echo "#define SECRET_PSK \"test\";" >>  ~/arduino/libraries/wifi/wifi.h
 
 
       # Build examples
