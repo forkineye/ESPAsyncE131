@@ -3,7 +3,7 @@
 *                  and print some statistics.
 *
 * Project: ESPAsyncE131 - Asynchronous E.131 (sACN) library for Arduino ESP8266 and ESP32
-* Copyright (c) 2019 Shelby Merrick
+* Copyright (c) 2019 Shelby Merrick, send support Will Tatam
 * http://www.forkineye.com
 *
 *  This program is provided free for you to use in any way that you wish,
