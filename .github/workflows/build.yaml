@@ -51,7 +51,9 @@ jobs:
       - name: Compile for ESP8266
         run: |
           arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test-Sender/E131_Test-Sender.ino
  
       - name: Compile for ESP32
         run: |
           arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test-Sender/E131_Test-Sender.ino
