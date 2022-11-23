@@ -22,6 +22,7 @@ jobs:
           arduino-cli config set directories.user ~/arduino
       - name: Install platforms
         run: |
+          arduino-cli core update-index
           arduino-cli core install $ESP8266_PLAT
           arduino-cli core install $ESP32_PLAT
 
