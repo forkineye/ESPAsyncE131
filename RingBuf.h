@@ -28,7 +28,7 @@
         #define RB_ATOMIC_END }
 
 
-    #elif defined(ARDUINO_ARCH_ESP8266)
+    #elif defined(ARDUINO_ARCH_ESP8266) || defined(ARDUINO_ARCH_ESP32)
         #ifndef __STRINGIFY
             #define __STRINGIFY(a) #a
         #endif
