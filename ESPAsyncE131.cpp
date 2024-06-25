@@ -112,23 +112,63 @@ bool ESPAsyncE131::initMulticast(uint16_t universe, uint8_t n) {
 //
 /////////////////////////////////////////////////////////
 
-void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet) {
+void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet)
+{
     e131_error_t error = ERROR_NONE;
-
     sbuff = reinterpret_cast<e131_packet_t *>(_packet.data());
-    if (memcmp(sbuff->acn_id, ESPAsyncE131::ACN_ID, sizeof(sbuff->acn_id)))
-        error = ERROR_ACN_ID;
-    if (htonl(sbuff->root_vector) != ESPAsyncE131::VECTOR_ROOT)
-        error = ERROR_VECTOR_ROOT;
-    if (htonl(sbuff->frame_vector) != ESPAsyncE131::VECTOR_FRAME)
-        error = ERROR_VECTOR_FRAME;
-    if (sbuff->dmp_vector != ESPAsyncE131::VECTOR_DMP)
-        error = ERROR_VECTOR_DMP;
-    if (sbuff->property_values[0] != 0)
-        error = ERROR_IGNORE;
 
+    do // once
+    {
+        if (memcmp(sbuff->acn_id, ESPAsyncE131::ACN_ID, sizeof(sbuff->acn_id)))
+        {
+            error = ERROR_ACN_ID;
+            break;
+        }
 
-    if (!error) {
+        if (htonl(sbuff->root_vector) != ESPAsyncE131::VECTOR_ROOT)
+        {
+            error = ERROR_VECTOR_ROOT;
+            break;
+        }
+
+        if (htonl(sbuff->frame_vector) != ESPAsyncE131::VECTOR_FRAME)
+        {
+            error = ERROR_VECTOR_FRAME;
+            break;
+        }
+
+        if (sbuff->dmp_vector != ESPAsyncE131::VECTOR_DMP)
+        {
+            error = ERROR_VECTOR_DMP;
+            break;
+        }
+
+        if (sbuff->property_values[0] != 0)
+        {
+            error = ERROR_IGNORE;
+            break;
+        }
+
+        // Are we looknig for a new source?
+        if((0 != LastAcceptedSource.PdusToIgnore) &&
+           (sbuff->priority < LastAcceptedSource.priority))
+        {
+            // pdu priority is from a lower priority source.
+            // do not accept until we do not hear from the
+            // higher priority source for a while.
+            if(0 != LastAcceptedSource.PdusToIgnore)
+            {
+                LastAcceptedSource.PdusToIgnore --;
+            }
+            error = ERROR_IGNORE;
+            break;
+        }
+
+        // remember the priority of the data source and
+        // set up the delay counter
+        LastAcceptedSource.PdusToIgnore = NumPdusToIgnoreBeforeSwitchingSources;
+        LastAcceptedSource.priority = sbuff->priority;
+
         if (PacketCallback) { (*PacketCallback) (sbuff, UserInfo); }
         if (pbuff) { pbuff->add (pbuff, sbuff); }
 
@@ -136,11 +176,15 @@ void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet) {
         stats.last_clientIP = _packet.remoteIP();
         stats.last_clientPort = _packet.remotePort();
         stats.last_seen = millis();
-    } else if (error == ERROR_IGNORE) {
-        // Do nothing
-    } else {
+
+    } while(false);
+
+    if (error != ERROR_IGNORE)
+    {
         if (Serial)
+        {
             dumpError(error);
+        }
         stats.packet_errors++;
     }
 }

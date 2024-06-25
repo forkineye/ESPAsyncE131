@@ -143,6 +143,13 @@ class ESPAsyncE131 {
     RingBuf         *pbuff;     // Ring Buffer of universe packet buffers
     void            * UserInfo = nullptr;
 
+#define NumPdusToIgnoreBeforeSwitchingSources 5
+    struct LastAcceptedSource_t
+    {
+        uint8_t  priority = 0;
+        uint8_t  PdusToIgnore = 0;
+    } LastAcceptedSource;
+
     // Internal Initializers
     bool initUnicast();
     bool initMulticast(uint16_t universe, uint8_t n = 1);
