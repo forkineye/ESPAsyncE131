@@ -68,6 +68,22 @@ typedef struct ip_addr ip4_addr_t;
 #define E131_DMP_COUNT 123
 #define E131_DMP_DATA 125
 
+/* E1.31 Private Constants */
+const uint16_t 	_E131_PREAMBLE_SIZE = 0x0010;
+const uint16_t 	_E131_POSTAMBLE_SIZE = 0x0000;
+const uint8_t 	_E131_ACN_PID[] = {0x41, 0x53, 0x43, 0x2d, 0x45, 0x31, 0x2e, 0x31, 0x37, 0x00, 0x00, 0x00};
+const uint32_t 	_E131_ROOT_VECTOR = 0x00000004;
+const uint32_t 	_E131_FRAME_VECTOR = 0x00000002;
+const uint8_t 	_E131_FRAME_OPTIONS = 0x40;
+const uint8_t 	_E131_DMP_VECTOR = 0x02;
+const uint8_t 	_E131_DMP_TYPE = 0xa1;
+const uint16_t 	_E131_DMP_FIRST_ADDR = 0x0000;
+const uint16_t 	_E131_DMP_ADDR_INC = 0x0001;
+
+/* E1.31 Public Constants */
+const uint16_t 	E131_DEFAULT_PORT_srv = 5568;
+const uint8_t 	E131_DEFAULT_PRIORITY = 0x64;
+
 // E1.31 Packet Structure
 typedef union {
     struct {
@@ -101,6 +117,44 @@ typedef union {
 
     uint8_t raw[638];
 } e131_packet_t;
+
+/* E1.31 Packet Type */
+/* All packet contents shall be transmitted in network byte order (big endian) */
+typedef union {
+  struct {
+    struct { /* ACN Root Layer: 38 bytes */
+      uint16_t preamble_size;    /* Preamble Size */
+      uint16_t postamble_size;   /* Post-amble Size */
+      uint8_t  acn_pid[12];      /* ACN Packet Identifier */
+      uint16_t flength;          /* Flags (high 4 bits) & Length (low 12 bits) */
+      uint32_t vector;           /* Layer Vector */
+      uint8_t  cid[16];          /* Component Identifier (UUID) */
+    } __attribute__((packed)) root;
+
+    struct { /* Framing Layer: 77 bytes */
+      uint16_t flength;          /* Flags (high 4 bits) & Length (low 12 bits) */
+      uint32_t vector;           /* Layer Vector */
+      uint8_t  source_name[64];  /* User Assigned Name of Source (UTF-8) */
+      uint8_t  priority;         /* Packet Priority (0-200, default 100) */
+      uint16_t reserved;         /* Reserved (should be always 0) */
+      uint8_t  seq_number;       /* Sequence Number (detect duplicates or out of order packets) */
+      uint8_t  options;          /* Options Flags (bit 7: preview data, bit 6: stream terminated) */
+      uint16_t universe;         /* DMX Universe Number */
+    } __attribute__((packed)) frame;
+
+    struct { /* Device Management Protocol (DMP) Layer: 523 bytes */
+      uint16_t flength;          /* Flags (high 4 bits) / Length (low 12 bits) */
+      uint8_t  vector;           /* Layer Vector */
+      uint8_t  type;             /* Address Type & Data Type */
+      uint16_t first_addr;       /* First Property Address */
+      uint16_t addr_inc;         /* Address Increment */
+      uint16_t prop_val_cnt;     /* Property Value Count (1 + number of slots) */
+      uint8_t  prop_val[513];    /* Property Values (DMX start code + slots data) */
+    } __attribute__((packed)) dmp;
+  } __attribute__((packed));
+
+  uint8_t raw[638]; /* raw buffer view: 638 bytes */
+} e131_packet_tx_t;
 
 // Error Types
 typedef enum {
@@ -141,6 +195,9 @@ class ESPAsyncE131 {
     e131_packet_t   *sbuff;     // Pointer to scratch packet buffer
     AsyncUDP        udp;        // AsyncUDP
     RingBuf         *pbuff;     // Ring Buffer of universe packet buffers
+    e131_packet_tx_t pbuff3;  /* Packet buffer */
+    e131_packet_tx_t pbuff4;   /* Double buffer */
+    e131_packet_tx_t *pwbuffTX; /* Pointer to working packet TX buffer */
     void            * UserInfo = nullptr;
 
 #define NumPdusToIgnoreBeforeSwitchingSources 5
@@ -160,8 +217,12 @@ class ESPAsyncE131 {
     void (*PacketCallback)(e131_packet_t* ReceivedData, void* UserInfo) = nullptr;
     ESPAsyncE131PortId E131_ListenPort = E131_DEFAULT_PORT;
 
+    uint16_t swapf_uint16(uint16_t x);
+    uint32_t swapf_uint32(uint32_t x);
+
  public:
     e131_stats_t  stats;    // Statistics tracker
+    e131_packet_tx_t *packetTX;         /* Pointer to last valid TX packet */
     ESPAsyncE131(uint8_t buffers = 1);
 
     // Generic UDP listener, no physical or IP configuration
@@ -177,6 +238,18 @@ class ESPAsyncE131 {
 
     // Diag functions
     void dumpError(e131_error_t error);
+
+    // void stopUdp(void);
+    // void connectMulticast(uint16_t universe);
+    // void dumpPacket(int packetNo);
+    void setRGB(const uint8_t channel,const uint8_t dRed,const uint8_t dGreen,const uint8_t dBlue);
+    void setSourceName(const char *source_name); //
+    void setSequenceNumber(const int  seq_number);
+    void setData(const int channel, const int dmxVal );
+    int  setPacketHeader(const uint16_t universe, const uint16_t num_channels);
+    void fillSendBuffer(uint8_t fillData);
+    void clearSendBuffer(void );
+    void sendPacket(uint16_t universe);
 };
 
 #endif  // ESPASYNCE131_H_
