@@ -22,17 +22,12 @@ jobs:
           arduino-cli config set directories.user ~/arduino
       - name: Install platforms
         run: |
+          arduino-cli core update-index
           arduino-cli core install $ESP8266_PLAT
           arduino-cli core install $ESP32_PLAT
 
       # Grab all the required libraries
       # Checkout won't allow paths outside of our workspace, so we put them in alib and move later.
-      - name: Checkout ESPAsyncE131
-        uses: actions/checkout@v2
-        with:
-          repository: forkineye/ESPAsyncE131
-          path: alib/ESPAsyncE131
-          
       - name: Checkout ESPAsyncUDP
         uses: actions/checkout@v2
         with:
@@ -45,12 +40,19 @@ jobs:
           mkdir -p ~/arduino/libraries
           mv alib/* ~/arduino/libraries
           rmdir alib
+          mkdir -p ~/arduino/libraries/wifi
+          echo "#define SECRET_SSID \"test\";" > ~/arduino/libraries/wifi/wifi.h
+          echo "#define SECRET_PSK \"test\";" >>  ~/arduino/libraries/wifi/wifi.h
+          cp -rv ./ ~/arduino/libraries/ESPAsyncE131
+
 
       # Build examples
       - name: Compile for ESP8266
         run: |
           arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP8266_FQBN examples/E131_Test-Sender/E131_Test-Sender.ino
  
       - name: Compile for ESP32
         run: |
           arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test/E131_Test.ino
+          arduino-cli compile --fqbn $ESP32_FQBN examples/E131_Test-Sender/E131_Test-Sender.ino
