@@ -179,7 +179,7 @@ void ESPAsyncE131::parsePacket(AsyncUDPPacket _packet)
 
     } while(false);
 
-    if (error != ERROR_IGNORE)
+    if (error != ERROR_IGNORE && error != ERROR_NONE)
     {
         if (Serial)
         {
