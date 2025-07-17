@@ -27,10 +27,7 @@ const byte ESPAsyncE131::ACN_ID[12] = { 0x41, 0x53, 0x43, 0x2d, 0x45, 0x31, 0x2e
 ESPAsyncE131::ESPAsyncE131(uint8_t buffers) {
 
     pbuff = nullptr;
-    if (buffers)
-    {
-        pbuff = RingBuf_new (sizeof (e131_packet_t), buffers);
-    }
+    setBuffers(buffers);
 
     stats.num_packets = 0;
     stats.packet_errors = 0;
@@ -66,6 +63,20 @@ bool ESPAsyncE131::begin (e131_listen_t type, ESPAsyncE131PortId UdpPortId, uint
 // Private init() members
 //
 /////////////////////////////////////////////////////////
+
+void ESPAsyncE131::setBuffers(uint8_t buffers)
+{
+    if(pbuff)
+    {
+        RingBuf_delete(pbuff);
+        pbuff = nullptr;
+    }
+
+    if (buffers)
+    {
+        pbuff = RingBuf_new (sizeof (e131_packet_t), buffers);
+    }
+} // setBuffers
 
 bool ESPAsyncE131::initUnicast() {
     bool success = false;
