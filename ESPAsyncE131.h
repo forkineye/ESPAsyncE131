@@ -22,19 +22,12 @@
 
 #ifdef ESP32
   #include <AsyncUDP.h>
-  #ifdef ETHERNET
-    #include <ETH.h>
-  #else
-    #include <WiFi.h>
-  #endif
+  #include <ETH.h>
+  #include <WiFi.h>
 #elif defined(ESP8266)
-  #ifdef ETHERNET
-    #error Ethernet is not supported on ESP8266
-  #else
-    #include <ESPAsyncUDP.h>
-    #include <ESP8266WiFi.h>
-    #include <ESP8266WiFiMulti.h>
-  #endif
+  #include <ESPAsyncUDP.h>
+  #include <ESP8266WiFi.h>
+  #include <ESP8266WiFiMulti.h>
 #else
   #error Platform not supported
 #endif

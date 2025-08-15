@@ -101,19 +101,20 @@ bool ESPAsyncE131::initMulticast(uint16_t universe, uint8_t n) {
         ip4_addr_t ifaddr;
         ip4_addr_t multicast_addr;
         
-        #ifdef ETHERNET
+				if(ETH.linkUp())
           ifaddr.addr = static_cast<uint32_t>(ETH.localIP());
-        #else
+        else if(WiFi.isConnected())
           ifaddr.addr = static_cast<uint32_t>(WiFi.localIP());
-        #endif
-        for (uint8_t i = 1; i < n; i++) {
+        else
+					ifaddr.addr = static_cast<uint32_t>(IPAddress(0,0,0,0));
+				for (uint8_t i = 1; i < n; i++) {
             multicast_addr.addr = static_cast<uint32_t>(IPAddress(239, 255,
                     (((universe + i) >> 8) & 0xff), (((universe + i) >> 0)
                     & 0xff)));
             igmp_joingroup(&ifaddr, &multicast_addr);
         }
 
-        udp.onPacket(std::bind(&ESPAsyncE131::parsePacket, this,
+				udp.onPacket(std::bind(&ESPAsyncE131::parsePacket, this,
                 std::placeholders::_1));
 
         success = true;
