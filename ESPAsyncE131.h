@@ -21,14 +21,22 @@
 #define ESPASYNCE131_H_
 
 #ifdef ESP32
-#include <WiFi.h>
-#include <AsyncUDP.h>
-#elif defined (ESP8266)
-#include <ESPAsyncUDP.h>
-#include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
+	#include <AsyncUDP.h>
+	#ifdef ETHERNET
+		#include <ETH.h>
+	#else
+		#include <WiFi.h>
+	#endif
+#elif defined(ESP8266)
+	#ifdef ETHERNET
+		#error Ethernet is not supported on ESP8266
+	#else
+		#include <ESPAsyncUDP.h>
+		#include <ESP8266WiFi.h>
+		#include <ESP8266WiFiMulti.h>
+	#endif
 #else
-#error Platform not supported
+	#error Platform not supported
 #endif
 
 #include <lwip/ip_addr.h>
