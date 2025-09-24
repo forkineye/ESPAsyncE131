@@ -17,6 +17,6 @@
   "headers": "ESPAsyncE131.h",
   "dependencies": {
     "name": "ESPAsyncUDP",
-    "platforms": "espressif8266"
+    "platforms": ["espressif8266"]
   }
 }
